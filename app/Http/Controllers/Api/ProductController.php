@@ -69,7 +69,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data category ditemukan',
+            'message' => 'Data menu ditemukan',
             'data' => $product,
         ], 200);
     }
@@ -105,8 +105,8 @@ class ProductController extends Controller
         //save image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $image->storeAs('public/products', $product->id . '.' . $image->getClientOriginalExtension());
-            $product->image = 'storage/products/' . $product->id . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+            $product->image = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
             $product->save();
         }
 
@@ -128,7 +128,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data category berhasil dihapus',
+            'message' => 'Data menu berhasil dihapus',
             'data' => $product,
         ], 200);
     }

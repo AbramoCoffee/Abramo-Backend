@@ -45,5 +45,5 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::post('/api-products', [ProductController::class, 'store'])->middleware('auth:sanctum');
     Route::get('/api-products/{id}', [ProductController::class, 'show'])->middleware('auth:sanctum');
     Route::post('/api-products/{id}', [ProductController::class, 'update'])->middleware('auth:sanctum');
-    Route::delete('products/{id}', [ProductController::class, 'destroy'])->middleware('auth:sanctum');
+    Route::delete('/api-products/{id}', [ProductController::class, 'destroy'])->middleware('auth:sanctum');
 });
