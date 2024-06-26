@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -21,8 +23,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        // validate the request...
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
@@ -30,34 +31,48 @@ class ProductController extends Controller
             'stock' => 'required|numeric',
             'status' => 'required|boolean',
             'is_favorite' => 'required|boolean',
-
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // store the request...
-        $product = new Product;
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->category_id = $request->category_id;
-        $product->stock = $request->stock;
-        $product->status = $request->status;
-        $product->is_favorite = $request->is_favorite;
 
-        //save image
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 422);
+        }
+
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'category_id' => $request->category_id,
+            'stock' => $request->stock,
+            'status' => $request->status,
+            'is_favorite' => $request->is_favorite,
+        ];
+
+        // upload image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
-            $product->image = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
-            $product->save();
-        } else {
-            $product->save();
+            $data['image'] = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Menu berhasil ditambahkan',
-            'data' => $product
-        ], 200);
+        //create product
+        $product = Product::create($data);
+
+        //return response
+        if ($data) {
+            return response()->json([
+                'status' => 'Success',
+                'message' => 'Menu berhasil ditambahkan',
+                'data' => $product,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'Failed',
+                'message' => "Menu gagal ditambahkan",
+            ], 400);
+        }
     }
 
     /**
@@ -80,8 +95,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // validate the request...
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
@@ -89,32 +103,53 @@ class ProductController extends Controller
             'stock' => 'required|numeric',
             'status' => 'required|boolean',
             'is_favorite' => 'required|boolean',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // update the request...
-        $product = Product::find($id);
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->category_id = $request->category_id;
-        $product->stock = $request->stock;
-        $product->status = $request->status;
-        $product->is_favorite = $request->is_favorite;
-        $product->save();
-
-        //save image
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
-            $product->image = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
-            $product->save();
+        // check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 422);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data menu berhasil diperbarui',
-            'data' => $product,
-        ], 200);
+        $product = Product::find($id);
+
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'category_id' => $request->category_id,
+            'stock' => $request->stock,
+            'status' => $request->status,
+            'is_favorite' => $request->is_favorite,
+        ];
+
+        if ($request->hasFile('image')) {
+            if ($product->image == null) {
+                $image = $request->file('image');
+                $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+                $data['image'] = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
+            } else {
+                Storage::delete(Product::find($id)->image);
+                $image = $request->file('image');
+                $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+                $data['image'] = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
+            }
+        }
+
+        $product->update($data);
+
+        if ($product) {
+            return response()->json([
+                'status' => 'Success',
+                'message' => 'Menu berhasil diupdate',
+                'data' => $product,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'Failed',
+                'message' => 'Menu gagal diupdate',
+            ], 400);
+        }
     }
 
     /**
@@ -122,14 +157,25 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        // delete the request...
-        $product = Product::find($id);
-        $product->delete();
+        if (Product::find($id)->image != NULL) {
+            Storage::delete(Product::find($id)->image);
+        }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Data menu berhasil dihapus',
-            'data' => $product,
-        ], 200);
+        $product = Product::find($id);
+
+        Product::find($id)->delete();
+
+        if ($product) {
+            return response()->json([
+                'status' => 'Success',
+                'message' => 'Menu berhasil dihapus',
+                'data' => $product,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'Failed',
+                'message' => 'Menu gagal dihapus',
+            ], 400);
+        }
     }
 }

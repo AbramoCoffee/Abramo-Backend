@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -48,33 +49,41 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // validate the request...
-        $request->validate([
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
             'role' => 'required|in:owner,kitchen,cashier',
         ]);
 
-        // store the request...
-        $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->role = $request->role;
-        $save = $user->save();
 
-        if ($save) {
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 422);
+        }
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ];
+
+        //create product
+        $user = User::create($data);
+
+        //return response
+        if ($data) {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Register berhasil',
-                'user' => $user
-            ], 200);
+                'status' => 'Success',
+                'message' => 'Pengguna berhasil ditambahkan',
+                'data' => $user,
+            ]);
         } else {
             return response()->json([
-                'status' => 'failed',
-                'message' => 'Register gagal',
-                'user' => $user
+                'status' => 'Failed',
+                'message' => "Pengguna gagal ditambahkan",
             ], 400);
         }
     }
