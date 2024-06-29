@@ -36,6 +36,19 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
+                                <label>Kode</label>
+                                <input type="text"
+                                    class="form-control @error('code')
+                                is-invalid
+                            @enderror"
+                                    name="code">
+                                @error('code')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
                                 <label>Name</label>
                                 <input type="text"
                                     class="form-control @error('name')

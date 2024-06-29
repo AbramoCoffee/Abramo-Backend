@@ -14,7 +14,7 @@ class ProductController extends Controller
     {
         //get all products
         $products = Product::all();
-        // $products = Product::paginate(10);
+        $products->load('category');
         return response()->json([
             'status' => 'success',
             'data' => $products
@@ -24,11 +24,12 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'code' => 'required',
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
             'category_id' => 'required',
-            'stock' => 'required|numeric',
+            'qty' => 'required|numeric',
             'status' => 'required|boolean',
             'is_favorite' => 'required|boolean',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -41,11 +42,12 @@ class ProductController extends Controller
         }
 
         $data = [
+            'code' => $request->code,
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'category_id' => $request->category_id,
-            'stock' => $request->stock,
+            'qty' => $request->qty,
             'status' => $request->status,
             'is_favorite' => $request->is_favorite,
         ];
@@ -96,11 +98,12 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            'code' => 'required',
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
             'category_id' => 'required',
-            'stock' => 'required|numeric',
+            'qty' => 'required|numeric',
             'status' => 'required|boolean',
             'is_favorite' => 'required|boolean',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -114,11 +117,12 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         $data = [
+            'code' => $request->code,
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'category_id' => $request->category_id,
-            'stock' => $request->stock,
+            'qty' => $request->qty,
             'status' => $request->status,
             'is_favorite' => $request->is_favorite,
         ];

@@ -33,11 +33,12 @@ class ProductController extends Controller
     {
         // validate the request...
         $request->validate([
+            'code' => 'required',
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
             'category_id' => 'required',
-            'stock' => 'required|numeric',
+            'qty' => 'required|numeric',
             'status' => 'required|boolean',
             'is_favorite' => 'required|boolean',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -45,11 +46,12 @@ class ProductController extends Controller
 
         // store the request...
         $product = new Product;
+        $product->code = $request->code;
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
         $product->category_id = $request->category_id;
-        $product->stock = $request->stock;
+        $product->qty = $request->qty;
         $product->status = $request->status;
         $product->is_favorite = $request->is_favorite;
 
@@ -91,11 +93,12 @@ class ProductController extends Controller
     {
         // validate the request...
         $request->validate([
+            'code' => 'required',
             'name' => 'required',
             'description' => 'required',
             'price' => 'required|numeric',
             'category_id' => 'required',
-            'stock' => 'required|numeric',
+            'qty' => 'required|numeric',
             'status' => 'required|boolean',
             'is_favorite' => 'required|boolean',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -103,11 +106,12 @@ class ProductController extends Controller
 
         // update the request...
         $product = Product::find($id);
+        $product->code = $request->code;
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
         $product->category_id = $request->category_id;
-        $product->stock = $request->stock;
+        $product->qty = $request->qty;
         $product->status = $request->status;
         $product->is_favorite = $request->is_favorite;
         $product->save();
