@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Menu;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class ProductController extends Controller
+class MenuApiController extends Controller
 {
     public function index()
     {
         //get all products
-        $products = Product::all();
-        $products->load('category');
+        $menus = Menu::all();
+        $menus->load('category');
         return response()->json([
             'status' => 'success',
-            'data' => $products
+            'data' => $menus
         ], 200);
     }
 
@@ -55,19 +55,19 @@ class ProductController extends Controller
         // upload image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
-            $data['image'] = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/menus', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+            $data['image'] = 'storage/menus/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
         }
 
         //create product
-        $product = Product::create($data);
+        $menu = Menu::create($data);
 
         //return response
         if ($data) {
             return response()->json([
                 'status' => 'Success',
                 'message' => 'Menu berhasil ditambahkan',
-                'data' => $product,
+                'data' => $menu,
             ]);
         } else {
             return response()->json([
@@ -82,12 +82,12 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $product = Product::find($id);
+        $menu = Menu::find($id);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data menu ditemukan',
-            'data' => $product,
+            'data' => $menu,
         ], 200);
     }
 
@@ -114,7 +114,7 @@ class ProductController extends Controller
             return response()->json($validator->messages(), 422);
         }
 
-        $product = Product::find($id);
+        $menu = Menu::find($id);
 
         $data = [
             'code' => $request->code,
@@ -128,25 +128,25 @@ class ProductController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            if ($product->image == null) {
+            if ($menu->image == null) {
                 $image = $request->file('image');
-                $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
-                $data['image'] = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/menus', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+                $data['image'] = 'storage/menus/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
             } else {
-                Storage::delete(Product::find($id)->image);
+                Storage::delete(Menu::find($id)->image);
                 $image = $request->file('image');
-                $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
-                $data['image'] = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
+                $image->storeAs('public/menus', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+                $data['image'] = 'storage/menus/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
             }
         }
 
-        $product->update($data);
+        $menu->update($data);
 
-        if ($product) {
+        if ($menu) {
             return response()->json([
                 'status' => 'Success',
                 'message' => 'Menu berhasil diupdate',
-                'data' => $product,
+                'data' => $menu,
             ]);
         } else {
             return response()->json([
@@ -161,19 +161,19 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        if (Product::find($id)->image != NULL) {
-            Storage::delete(Product::find($id)->image);
+        if (Menu::find($id)->image != NULL) {
+            Storage::delete(Menu::find($id)->image);
         }
 
-        $product = Product::find($id);
+        $menu = Menu::find($id);
 
-        Product::find($id)->delete();
+        Menu::find($id)->delete();
 
-        if ($product) {
+        if ($menu) {
             return response()->json([
                 'status' => 'Success',
                 'message' => 'Menu berhasil dihapus',
-                'data' => $product,
+                'data' => $menu,
             ], 200);
         } else {
             return response()->json([

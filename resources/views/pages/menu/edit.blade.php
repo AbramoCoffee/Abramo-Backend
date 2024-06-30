@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Product')
+@section('title', 'Edit Menu')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -20,17 +20,17 @@
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
                     <div class="breadcrumb-item"><a href="#">Forms</a></div>
-                    <div class="breadcrumb-item">Products</div>
+                    <div class="breadcrumb-item">Menu</div>
                 </div>
             </div>
 
             <div class="section-body">
-                <h2 class="section-title">Products</h2>
+                <h2 class="section-title">Menu</h2>
 
 
 
                 <div class="card">
-                    <form action="{{ route('products.update', $product) }}" method="POST">
+                    <form action="{{ route('menu.update', $menu) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="card-header">
