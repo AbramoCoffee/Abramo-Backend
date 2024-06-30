@@ -3,8 +3,9 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\MenuApiController;
+use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\OrderItemController;
-use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,13 +44,13 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::delete('/api-categories/{id}', [CategoryController::class, 'destroy'])->middleware('auth:sanctum');
 
 
-    //Product API
-    // Route::apiResource('/api-products', ProductController::class)->middleware('auth:sanctum');
-    Route::get('/api-products', [ProductController::class, 'index'])->middleware('auth:sanctum');
-    Route::post('/api-products', [ProductController::class, 'store'])->middleware('auth:sanctum');
-    Route::get('/api-products/{id}', [ProductController::class, 'show'])->middleware('auth:sanctum');
-    Route::post('/api-products/{id}', [ProductController::class, 'update'])->middleware('auth:sanctum');
-    Route::delete('/api-products/{id}', [ProductController::class, 'destroy'])->middleware('auth:sanctum');
+    //Menu API
+    // Route::apiResource('/api-menus', ProductController::class)->middleware('auth:sanctum');
+    Route::get('/api-menus', [MenuApiController::class, 'index'])->middleware('auth:sanctum');
+    Route::post('/api-menus', [MenuApiController::class, 'store'])->middleware('auth:sanctum');
+    Route::get('/api-menus/{id}', [MenuApiController::class, 'show'])->middleware('auth:sanctum');
+    Route::post('/api-menus/{id}', [MenuApiController::class, 'update'])->middleware('auth:sanctum');
+    Route::delete('/api-menus/{id}', [MenuApiController::class, 'destroy'])->middleware('auth:sanctum');
 
 
     // Order API

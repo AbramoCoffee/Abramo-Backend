@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product Create')
+@section('title', 'Menu Create')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -20,16 +20,16 @@
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
                     <div class="breadcrumb-item"><a href="#">Forms</a></div>
-                    <div class="breadcrumb-item">Product</div>
+                    <div class="breadcrumb-item">Menu</div>
                 </div>
             </div>
 
             <div class="section-body">
-                <h2 class="section-title">Product</h2>
+                <h2 class="section-title">Menu</h2>
 
 
                 <div class="card">
-                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('menu.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="card-header">
                             <h4>Input Text</h4>
@@ -113,7 +113,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Photo Product</label>
+                                <label class="form-label">Photo Menu</label>
                                 <div class="col-sm-9">
                                     <input type="file" class="form-control" name="image"
                                         @error('image') is-invalid @enderror>

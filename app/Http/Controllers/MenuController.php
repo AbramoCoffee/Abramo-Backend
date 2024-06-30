@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ProductController extends Controller
+class MenuController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $products = Product::paginate(10);
-        return view('pages.products.index', compact('products'));
+        $menus = Menu::paginate(10);
+        return view('pages.menu.index', compact('menus'));
     }
 
     /**
@@ -23,7 +23,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = DB::table('categories')->get();
-        return view('pages.products.create', compact('categories'));
+        return view('pages.menu.create', compact('categories'));
     }
 
     /**
@@ -45,27 +45,27 @@ class ProductController extends Controller
         ]);
 
         // store the request...
-        $product = new Product;
-        $product->code = $request->code;
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->category_id = $request->category_id;
-        $product->qty = $request->qty;
-        $product->status = $request->status;
-        $product->is_favorite = $request->is_favorite;
+        $menu = new Menu;
+        $menu->code = $request->code;
+        $menu->name = $request->name;
+        $menu->description = $request->description;
+        $menu->price = $request->price;
+        $menu->category_id = $request->category_id;
+        $menu->qty = $request->qty;
+        $menu->status = $request->status;
+        $menu->is_favorite = $request->is_favorite;
 
         //save image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
-            $product->image = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
-            $product->save();
+            $image->storeAs('public/menus', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+            $menu->image = 'storage/menus/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
+            $menu->save();
         } else {
-            $product->save();
+            $menu->save();
         }
 
-        return redirect()->route('products.index')->with('success', 'Product created successfully');
+        return redirect()->route('menu.index')->with('success', 'Menu created successfully');
     }
 
     /**
@@ -73,7 +73,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        return view('pages.products.show');
+        return view('pages.menu.show');
     }
 
     /**
@@ -81,9 +81,9 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
+        $menu = Menu::findOrFail($id);
         $categories = DB::table('categories')->get();
-        return view('pages.products.edit', compact('product', 'categories'));
+        return view('pages.menu.edit', compact('menu', 'categories'));
     }
 
     /**
@@ -105,26 +105,26 @@ class ProductController extends Controller
         ]);
 
         // update the request...
-        $product = Product::find($id);
-        $product->code = $request->code;
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->category_id = $request->category_id;
-        $product->qty = $request->qty;
-        $product->status = $request->status;
-        $product->is_favorite = $request->is_favorite;
-        $product->save();
+        $menu = menu::find($id);
+        $menu->code = $request->code;
+        $menu->name = $request->name;
+        $menu->description = $request->description;
+        $menu->price = $request->price;
+        $menu->category_id = $request->category_id;
+        $menu->qty = $request->qty;
+        $menu->status = $request->status;
+        $menu->is_favorite = $request->is_favorite;
+        $menu->save();
 
         //save image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $image->storeAs('public/products', date("YmdHis") . '.' . $image->getClientOriginalExtension());
-            $product->image = 'storage/products/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
-            $product->save();
+            $image->storeAs('public/menus', date("YmdHis") . '.' . $image->getClientOriginalExtension());
+            $menu->image = 'storage/menus/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
+            $menu->save();
         }
 
-        return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        return redirect()->route('menu.index')->with('success', 'Menu updated successfully');
     }
 
     /**
@@ -133,9 +133,9 @@ class ProductController extends Controller
     public function destroy($id)
     {
         // delete the request...
-        $product = Product::find($id);
-        $product->delete();
+        $menu = Menu::find($id);
+        $menu->delete();
 
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+        return redirect()->route('menu.index')->with('success', 'Menu deleted successfully');
     }
 }
