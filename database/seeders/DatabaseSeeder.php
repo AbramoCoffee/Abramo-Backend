@@ -16,22 +16,22 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         \App\Models\User::factory()->create([
-            'name' => 'test owner',
-            'email' => 'testowner@example.com',
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
             'password' => Hash::make("password"),
             'role' => "owner",
         ]);
 
         \App\Models\User::factory()->create([
-            'name' => 'test kitchen',
-            'email' => 'testkitchen@example.com',
+            'name' => 'Kitchen',
+            'email' => 'kitchen@example.com',
             'password' => Hash::make("password"),
             'role' => "kitchen",
         ]);
 
         \App\Models\User::factory()->create([
-            'name' => 'test cashier',
-            'email' => 'testcashier@example.com',
+            'name' => 'Cashier',
+            'email' => 'cashier@example.com',
             'password' => Hash::make("password"),
             'role' => "cashier",
         ]);
