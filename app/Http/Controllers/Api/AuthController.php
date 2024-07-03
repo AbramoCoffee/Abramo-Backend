@@ -70,7 +70,7 @@ class AuthController extends Controller
             'role' => $request->role,
         ];
 
-        //create product
+        //create user
         $user = User::create($data);
 
         //return response

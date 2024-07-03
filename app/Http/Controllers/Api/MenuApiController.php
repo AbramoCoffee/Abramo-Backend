@@ -12,7 +12,7 @@ class MenuApiController extends Controller
 {
     public function index()
     {
-        //get all products
+        //get all menu
         $menus = Menu::all();
         $menus->load('category');
         return response()->json([
@@ -59,7 +59,7 @@ class MenuApiController extends Controller
             $data['image'] = 'storage/menus/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
         }
 
-        //create product
+        //create menu
         $menu = Menu::create($data);
 
         //return response

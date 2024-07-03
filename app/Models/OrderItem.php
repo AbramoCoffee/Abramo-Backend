@@ -17,15 +17,15 @@ class OrderItem extends Model
 
     protected $casts = [
         'order_id' => 'integer',
-        'product_id' => 'integer',
+        'menu_id' => 'integer',
         'qty' => 'integer',
         'price' => 'integer',
     ];
 
 
-    public function product()
+    public function menu()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Menu::class);
     }
 
     public function order()
