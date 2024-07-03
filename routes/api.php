@@ -30,7 +30,7 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
 
     //register api
-    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('auth:sanctum');
 
     //logout api
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');

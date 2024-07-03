@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Product;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -69,6 +70,7 @@ class OrderController extends Controller
                 break;
         }
 
+        $income = $query->sum('total_price');
         $orders = $query->orderBy('id', 'DESC')->get();
 
 
@@ -77,7 +79,8 @@ class OrderController extends Controller
                 [
                     'status' => 'Success',
                     'message' => 'List Data Order',
-                    'data' => $orders
+                    'data' => $orders,
+                    'income' => $income
                 ],
                 200
             );
@@ -100,16 +103,16 @@ class OrderController extends Controller
 
             foreach ($orderedItems as $orderedItem) {
 
-                $product = Product::where('id', "=", $orderedItem['product_id'])->first();
+                $menu = Menu::where('id', "=", $orderedItem['menu_id'])->first();
 
-                $totalAmount += $product->price * $orderedItem['qty'];
+                $totalAmount += $menu->price * $orderedItem['qty'];
             }
 
             return $totalAmount;
         }
 
         $rules = [
-            'product_id' => 'required|integer',
+            'menu_id' => 'required|integer',
             'qty' => 'required|integer|min:1',
         ];
 
@@ -134,29 +137,44 @@ class OrderController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
+        $user = User::where('id', $request->input('user_id'))->first();
 
-        $order = Order::create([
+        $create_order = Order::create([
             'invoice' => 'INV-' . $newOrder,
+            'konsumen' => $request->input('konsumen'),
+            'user_id' => $request->input('user_id'),
             'payment_method' => $request->input('payment_method'),
             'total_price' => calculateTotalAmount($request->input('ordered_items')),
+            'total_paid' => $request->input('total_paid'),
+            'total_return' => $request->input('total_paid') - calculateTotalAmount($request->input('ordered_items')),
         ]);
+
+        $order = [
+            'invoice' => 'INV-' . $newOrder,
+            'konsumen' => $request->input('konsumen'),
+            'payment_method' => $request->input('payment_method'),
+            'total_price' => calculateTotalAmount($request->input('ordered_items')),
+            'total_paid' => $request->input('total_paid'),
+            'total_return' => $request->input('total_paid') - calculateTotalAmount($request->input('ordered_items')),
+            'user' => $user,
+        ];
 
         // Store ordered items associated with the Order
 
         foreach ($request->input('ordered_items') as $orderedItemData) {
 
-            $product = Product::where('id', $orderedItemData['product_id'])->first();
+            $menu = Menu::where('id', $orderedItemData['menu_id'])->first();
 
             OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $orderedItemData['product_id'],
+                'order_id' => $create_order->id,
+                'menu_id' => $orderedItemData['menu_id'],
                 'qty' => $orderedItemData['qty'],
-                'price' => $product->price * $orderedItemData['qty'],
+                'price' => $menu->price * $orderedItemData['qty'],
             ]);
         }
 
         // Return the newly created Order
-        if ($order) {
+        if ($create_order) {
             return response()->json([
                 'status' => 'Success',
                 'message' => 'Berhasil Membuat Pesanan',

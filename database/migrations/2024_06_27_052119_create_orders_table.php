@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('invoice');
+            $table->string('konsumen');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('payment_method');
             $table->integer('total_price');
+            $table->integer('total_paid');
+            $table->integer('total_return');
             $table->timestamps();
         });
     }
