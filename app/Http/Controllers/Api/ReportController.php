@@ -43,7 +43,7 @@ class ReportController extends Controller
             'description'     => $request->description,
         ];
 
-        //create product
+        //create report
         $report = Report::create($data);
 
         //return response
@@ -71,7 +71,6 @@ class ReportController extends Controller
             'message' => 'Data Laporan ditemukan',
             'data' => $report,
         ]);
-        // return new ProductResource(true, 'Data product Ditemukan!', $product);
     }
 
     public function update(Request $request, $id)

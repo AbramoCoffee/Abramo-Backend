@@ -48,7 +48,7 @@ class CategoryController extends Controller
             $data['image'] = 'storage/categories/' . date("YmdHis") . '.' . $image->getClientOriginalExtension();
         }
 
-        //create product
+        //create category
         $category = Category::create($data);
 
         //return response

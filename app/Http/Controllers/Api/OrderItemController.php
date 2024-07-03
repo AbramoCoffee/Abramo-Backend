@@ -53,7 +53,7 @@ class OrderItemController extends Controller
     public function getOrderItem($id)
     {
         $orderItem = OrderItem::find($id);
-        $orderItem->load('product');
+        $orderItem->load('menu');
         $orderItem->load('order');
 
         if ($orderItem) {
