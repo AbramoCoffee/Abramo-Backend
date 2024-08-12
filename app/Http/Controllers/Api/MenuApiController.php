@@ -10,13 +10,47 @@ use Illuminate\Support\Facades\Validator;
 
 class MenuApiController extends Controller
 {
+
+
     public function index()
     {
         //get all menu
-        $menus = Menu::all();
+        $menus = Menu::orderBy('id', 'DESC')->get();
         $menus->load('category');
         return response()->json([
             'status' => 'success',
+            'message' => 'List menu ditemukan',
+            'data' => $menus
+        ], 200);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        if ($query) {
+            $menus = Menu::where('name', 'like', "%$query%")
+                ->orWhere('description', 'like', "%$query%")
+                ->get();
+        } else {
+            $menus = Menu::all();
+        }
+
+        $menus->load('category');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'List menu ditemukan',
+            'data' => $menus
+        ], 200);
+    }
+
+    // Filter menu items by category ID
+    public function filterByCategory(Request $request, $categoryId)
+    {
+        $menus = Menu::where('category_id', $categoryId)->get();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'List menu ditemukan',
             'data' => $menus
         ], 200);
     }
@@ -30,8 +64,7 @@ class MenuApiController extends Controller
             'price' => 'required|numeric',
             'category_id' => 'required',
             'qty' => 'required|numeric',
-            'status' => 'required|boolean',
-            'is_favorite' => 'required|boolean',
+            'status' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -49,7 +82,6 @@ class MenuApiController extends Controller
             'category_id' => $request->category_id,
             'qty' => $request->qty,
             'status' => $request->status,
-            'is_favorite' => $request->is_favorite,
         ];
 
         // upload image
@@ -83,7 +115,7 @@ class MenuApiController extends Controller
     public function show($id)
     {
         $menu = Menu::find($id);
-
+        $menu->load('category');
         return response()->json([
             'status' => 'success',
             'message' => 'Data menu ditemukan',
@@ -104,8 +136,7 @@ class MenuApiController extends Controller
             'price' => 'required|numeric',
             'category_id' => 'required',
             'qty' => 'required|numeric',
-            'status' => 'required|boolean',
-            'is_favorite' => 'required|boolean',
+            'status' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -116,15 +147,16 @@ class MenuApiController extends Controller
 
         $menu = Menu::find($id);
 
+        // var_dump($request->qty);
+
         $data = [
             'code' => $request->code,
+            'category_id' => $request->category_id,
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'category_id' => $request->category_id,
             'qty' => $request->qty,
             'status' => $request->status,
-            'is_favorite' => $request->is_favorite,
         ];
 
         if ($request->hasFile('image')) {
@@ -145,7 +177,7 @@ class MenuApiController extends Controller
         if ($menu) {
             return response()->json([
                 'status' => 'Success',
-                'message' => 'Menu berhasil diupdate',
+                'message' => "Menu berhasil di edit",
                 'data' => $menu,
             ]);
         } else {

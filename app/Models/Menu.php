@@ -12,13 +12,12 @@ class Menu extends Model
     protected $fillable = [
         'code',
         'name',
+        'category_id',
         'description',
         'price',
         'image',
-        'stock',
+        'qty',
         'status',
-        'is_favorite',
-        'category_id',
     ];
 
     public function category()

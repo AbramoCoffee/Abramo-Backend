@@ -137,6 +137,7 @@ class ReportController extends Controller
     {
         $query = Report::query();
 
+
         switch ($time) {
             case 'today';
                 $query->whereDate('created_at', Carbon::today());
@@ -170,7 +171,7 @@ class ReportController extends Controller
         $response = [
             'status' => 'Success',
             'message' => 'List Data Laporan',
-            'reports' => $reports
+            'data' => $reports
         ];
 
         if ($reports) {
@@ -224,15 +225,15 @@ class ReportController extends Controller
             return response()->json(
                 [
                     'status' => 'Success',
-                    'message' => 'List Data Laporan Pengeluaran',
-                    'data' => $income
+                    'message' => 'Data Jumlah Pemasukan',
+                    'data' => "$income"
                 ]
             );
         } else {
             return response()->json([
                 'status' => 'Failed',
                 'message' => "Data gagal ditemukan",
-                'data' => '0'
+                'data' => "$income"
             ], 400);
         }
     }
@@ -276,7 +277,7 @@ class ReportController extends Controller
         $response = [
             'status' => 'Success',
             'message' => 'List Data Laporan Pengeluaran',
-            'data' => $outcome
+            'data' => "$outcome"
         ];
 
         if ($outcome) {
@@ -285,7 +286,7 @@ class ReportController extends Controller
             return response()->json([
                 'status' => 'Failed',
                 'message' => "Data gagal ditemukan",
-                'data' => '0'
+                'data' => "$outcome"
             ], 400);
         }
     }
@@ -360,9 +361,9 @@ class ReportController extends Controller
         $response = [
             'status' => 'Success',
             'message' => 'Laporan Keuntungan',
-            'income' => $income,
-            'outcome' => $outcome,
-            'revenue' => "$revenue"
+            // 'income' => "$income",
+            // 'outcome' => "$outcome",
+            'data' => "$revenue"
         ];
 
         if ($revenue) {
@@ -371,6 +372,9 @@ class ReportController extends Controller
             return response()->json([
                 'status' => 'Failed',
                 'message' => "Data gagal ditemukan",
+                // 'income' => "$income",
+                // 'outcome' => "$outcome",
+                'data' => "$revenue"
             ], 400);
         }
     }

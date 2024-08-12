@@ -53,7 +53,8 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8',
+            // 'password' => 'required|min:8',
+            'password' => 'required',
             'role' => 'required|in:owner,kitchen,cashier',
         ]);
 
@@ -102,6 +103,39 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'failed',
                 'message' => 'Logged out'
+            ], 400);
+        }
+    }
+
+    public function index()
+    {
+        // get all categories
+        $users = User::where('role', '=', "cashier")->orWhere('role', '=', "kitchen")
+            ->get();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data user berhasil ditampilkan',
+            'data' => $users
+        ], 200);
+    }
+
+    public function destroy($id)
+    {
+
+        $user = User::find($id);
+
+        User::find($id)->delete();
+
+        if ($user) {
+            return response()->json([
+                'status' => 'Success',
+                'message' => 'Pengguna berhasil dihapus',
+                'data' => $user,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'Failed',
+                'message' => 'Kategori gagal dihapus',
             ], 400);
         }
     }

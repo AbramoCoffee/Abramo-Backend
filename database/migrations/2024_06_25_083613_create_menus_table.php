@@ -18,10 +18,9 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('image')->nullable();
-            $table->decimal('price', 10, 2);
+            $table->integer('price')->default(0);
             $table->integer('qty')->default(0);
-            $table->boolean('status')->default(1);
-            $table->boolean('is_favorite')->default(0);
+            $table->enum('status', ['Aktif', 'Tidak Aktif']);
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('menus');
     }
 };

@@ -35,6 +35,11 @@ Route::group(['middleware' => 'api'], function ($router) {
     //logout api
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
+    // Users API
+    Route::get('/api-users', [AuthController::class, 'index'])->middleware('auth:sanctum');
+    Route::delete('/api-users/{id}', [AuthController::class, 'destroy'])->middleware('auth:sanctum');
+
+
     //Category API
     // Route::apiResource('/api-categories', CategoryController::class)->middleware('auth:sanctum');
     Route::get('/api-categories', [CategoryController::class, 'index'])->middleware('auth:sanctum');
@@ -47,6 +52,8 @@ Route::group(['middleware' => 'api'], function ($router) {
     //Menu API
     // Route::apiResource('/api-menus', ProductController::class)->middleware('auth:sanctum');
     Route::get('/api-menus', [MenuApiController::class, 'index'])->middleware('auth:sanctum');
+    Route::get('/api-menus-search', [MenuApiController::class, 'search'])->middleware('auth:sanctum');
+    Route::get('/api-menus-category/{category_id}', [MenuApiController::class, 'filterByCategory'])->middleware('auth:sanctum');
     Route::post('/api-menus', [MenuApiController::class, 'store'])->middleware('auth:sanctum');
     Route::get('/api-menus/{id}', [MenuApiController::class, 'show'])->middleware('auth:sanctum');
     Route::post('/api-menus/{id}', [MenuApiController::class, 'update'])->middleware('auth:sanctum');
@@ -57,6 +64,7 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::get('/api-orders', [OrderController::class, 'getOrders'])->middleware('auth:sanctum');
     Route::post('/api-orders', [OrderController::class, 'createOrder'])->middleware('auth:sanctum');
     Route::get('/api-orders/{time}', [OrderController::class, 'getOrdersByTime'])->middleware('auth:sanctum');
+    Route::post('/api-orders/{id}', [OrderController::class, 'updateOrder'])->middleware('auth:sanctum');
 
 
     // OrderItem API

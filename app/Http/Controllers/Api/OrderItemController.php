@@ -11,7 +11,8 @@ class OrderItemController extends Controller
     public function getOrderItems(Request $request)
     {
         $orderItem = OrderItem::orderBy('id', 'DESC')->get();
-
+        $orderItem->load('menu');
+        $orderItem->load('order');
 
         if ($orderItem) {
             return response()->json(
@@ -33,7 +34,8 @@ class OrderItemController extends Controller
     public function getOrderItemsByOrder($id)
     {
         $orderItem = OrderItem::where("order_id", "=", $id)->orderBy('id', 'DESC')->get();
-
+        $orderItem->load('menu');
+        $orderItem->load('order');
 
         if ($orderItem) {
             $response = [
