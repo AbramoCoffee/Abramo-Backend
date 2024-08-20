@@ -52,30 +52,49 @@ class OrderController extends Controller
     {
         $query = Order::query();
 
+        // $start_date = "";
+        // $end_date = "";
+
         switch ($time) {
             case 'today';
                 $query->whereDate('created_at', Carbon::today());
+                // $start_date = Carbon::today();
+                // $end_date = Carbon::today();
                 break;
             case 'yesterday';
                 $query->whereDate('created_at', Carbon::yesterday());
+                // $start_date = Carbon::yesterday();
+                // $end_date = Carbon::yesterday();
                 break;
             case 'this_week';
                 $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                // $start_date = Carbon::now()->startOfWeek();
+                // $end_date =  Carbon::now()->endOfWeek();
                 break;
             case 'last_week';
                 $query->whereBetween('created_at', [Carbon::now()->subWeek(), Carbon::now()]);
+                // $start_date = Carbon::now()->subWeek();
+                // $end_date =  Carbon::now()->now();
                 break;
             case 'this_month';
                 $query->whereMonth('created_at', Carbon::now()->month);
+                // $start_date = Carbon::now()->month;
+                // $end_date =  Carbon::now()->month;
                 break;
             case 'last_month';
                 $query->whereMonth('created_at', Carbon::now()->subMonth()->month);
+                // $start_date = Carbon::now()->subMonth()->month;
+                // $end_date =  Carbon::now()->subMonth()->month;
                 break;
             case 'this_year';
                 $query->whereYear('created_at', Carbon::now()->year);
+                // $start_date = Carbon::now()->year;
+                // $end_date =  Carbon::now()->year;
                 break;
             case 'last_year';
                 $query->whereYear('created_at', Carbon::now()->subYear()->year);
+                // $start_date = Carbon::now()->subYear()->year;
+                // $end_date =  Carbon::now()->subYear()->year;
                 break;
         }
 
@@ -96,7 +115,8 @@ class OrderController extends Controller
                     'status' => 'Success',
                     'message' => 'List Data Order',
                     'data' => $orders,
-                    'income' => $income
+                    // 'start_date' => $start_date,
+                    // 'end_date' => $end_date,
                 ],
                 200
             );
@@ -160,9 +180,12 @@ class OrderController extends Controller
             'konsumen' => $request->input('konsumen'),
             'cashier' => $request->input('cashier'),
             'payment_method' => $request->input('payment_method'),
-            'total_price' => calculateTotalAmount($request->input('ordered_items')),
+            'subtotal' => $request->input('subtotal'),
+            'total_price' => $request->input('total_price'),
+            // 'total_price' => calculateTotalAmount($request->input('ordered_items')),
             'total_paid' => $request->input('total_paid'),
             'total_return' => $request->input('total_paid') - calculateTotalAmount($request->input('ordered_items')),
+            'tax' => $request->input('tax'),
             'status' => $request->input('status'),
         ]);
 
@@ -170,9 +193,12 @@ class OrderController extends Controller
             'invoice' => 'INV-' . $newOrder,
             'konsumen' => $request->input('konsumen'),
             'payment_method' => $request->input('payment_method'),
-            'total_price' => calculateTotalAmount($request->input('ordered_items')),
+            'subtotal' => $request->input('subtotal'),
+            'total_price' => $request->input('total_price'),
+            // 'total_price' => calculateTotalAmount($request->input('ordered_items')),
             'total_paid' => $request->input('total_paid'),
             'total_return' => $request->input('total_paid') - calculateTotalAmount($request->input('ordered_items')),
+            'tax' => $request->input('tax'),
             'cashier' => $user,
             'status' => $request->input('status'),
         ];
@@ -191,6 +217,7 @@ class OrderController extends Controller
                 'menu_id' => $orderedItemData['menu_id'],
                 'qty' => $orderedItemData['qty'],
                 'price' => $menu->price * $orderedItemData['qty'],
+                'note' => $orderedItemData['note'] ?? null,
             ]);
         }
 

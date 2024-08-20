@@ -18,9 +18,11 @@ return new class extends Migration
             $table->string('cashier');
             // $table->foreignId('cashier_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('payment_method');
+            $table->integer('subtotal')->nullable();
             $table->integer('total_price');
             $table->integer('total_paid');
             $table->integer('total_return');
+            $table->integer('tax')->nullable();
             $table->enum('status', ['proses', 'selesai']);
             $table->timestamps();
         });
